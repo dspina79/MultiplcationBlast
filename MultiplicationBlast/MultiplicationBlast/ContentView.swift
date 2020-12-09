@@ -1,10 +1,3 @@
-//
-//  ContentView.swift
-//  MultiplicationBlast
-//
-//  Created by Dave Spina on 12/5/20.
-//
-
 import SwiftUI
 
 
@@ -16,6 +9,21 @@ struct QuestionView: View {
             BigSystemImage(systemImageName: "multiply")
             BigSystemImage(systemImageName: "\(question.y).square")
             BigSystemImage(systemImageName: "equal")
+        }
+    }
+}
+
+struct CircleNumber: View {
+    var value: Int
+    var body: some View {
+        ZStack {
+            Image(systemName: "circle.fill")
+                .foregroundColor(.white)
+                .scaleEffect(CGSize(width: 4.0, height: 4.0))
+            Text("\(value)")
+                .fontWeight(.bold)
+                .font(.system(size: 30))
+                .foregroundColor(.black)
         }
     }
 }
@@ -142,7 +150,8 @@ struct ContentView: View {
                     initialize()
                 }
             } else if showMain {
-                VStack(spacing: 20) {
+                VStack(alignment: .center, spacing: CGFloat(20)) {
+                    Spacer()
                         Text("Hello, \(self.userName)")
                             .font(/*@START_MENU_TOKEN@*/.title/*@END_MENU_TOKEN@*/)
                         Text("Difficulty Level: \(self.difficultyLevel)")
@@ -151,39 +160,28 @@ struct ContentView: View {
                         QuestionView(question: self.currentQuestion)
                         
                     if showAnswerDisplay {
-                        HStack {
+                        Spacer()
+                        HStack(alignment: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/, spacing: CGFloat(70)){
                             ForEach (currentPossibleAnswers, id: \.self) { ans in
                                 Button(action: {
                                     withAnimation(.easeIn) {
-                                        self.totalQuestionsAnswered += 1
-                                        if ans == currentQuestion.answer {
-                                            self.answersCorrect += 1
-                                            self.explicitAnimationAmount += 360.0
-                                            self.currentResponse = self.goodAnswerResponses[Int.random(in: 0..<self.goodAnswerResponses.count)]
-                                            self.currentGameplayColors = correctAnswerColors
-                                        } else {
-                                            self.currentResponse = "\(self.badAnswerResponses[Int.random(in: 0..<self.badAnswerResponses.count)]) the correct answer is \(currentQuestion.answer)."
-                                            self.currentGameplayColors = self.incorrectAnswerColors
-                                        }
-                                        self.showAnswerDisplay = false
+                                        renderCheck(ans: ans)
                                     }
                                 }) {
-                                    BigSystemImage(systemImageName: "\(ans).circle.fill")
-                                        .foregroundColor(.white)
+                                    CircleNumber(value: ans)
                                 }
                                 .rotation3DEffect(
                                     .degrees(ans == self.currentQuestion.answer ? explicitAnimationAmount : 0),
-                                    axis: (x: 0.0, y: 1.0, z: 0.0),
-                                    anchor: /*@START_MENU_TOKEN@*/.center/*@END_MENU_TOKEN@*/
+                                        axis: (x: 0.0, y: 1.0, z: 0.0)
                                 )
-                                
                             }
+                            
                         }
                     }
                         Text(self.currentResponse)
                             .font(.title2)
                     
-                        
+                        Spacer()
                         HStack {
                             Button("Next") {
                                 nextQuestion()
@@ -206,6 +204,7 @@ struct ContentView: View {
                             .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
                             .animation(.easeIn)
                         
+                        Spacer()
                         Button("New Game"){
                             self.showInit = true
                         }
@@ -221,7 +220,21 @@ struct ContentView: View {
                 }
             }
         }
-        }.edgesIgnoringSafeArea(/*@START_MENU_TOKEN@*/.all/*@END_MENU_TOKEN@*/)
+        }
+    }
+    
+    func renderCheck(ans: Int) {
+        self.totalQuestionsAnswered += 1
+        if ans == currentQuestion.answer {
+            self.answersCorrect += 1
+            self.explicitAnimationAmount += 360.0
+            self.currentResponse = self.goodAnswerResponses[Int.random(in: 0..<self.goodAnswerResponses.count)]
+            self.currentGameplayColors = correctAnswerColors
+        } else {
+            self.currentResponse = "\(self.badAnswerResponses[Int.random(in: 0..<self.badAnswerResponses.count)]) the correct answer is \(currentQuestion.answer)."
+            self.currentGameplayColors = self.incorrectAnswerColors
+        }
+        self.showAnswerDisplay = false
     }
     
     func getPossibleAnswers() -> [Int] {
