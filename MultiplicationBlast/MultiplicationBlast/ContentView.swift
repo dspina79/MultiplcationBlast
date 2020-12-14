@@ -196,7 +196,8 @@ struct ContentView: View {
                     }
                 
             } else if showScorePage {
-                    VStack () {
+                VStack (alignment: .center) {
+                    
                         Text("Your game score:")
                             .font(.title)
                         Text("\(self.score, specifier: "%.0f")%")
@@ -204,7 +205,7 @@ struct ContentView: View {
                             .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
                             .animation(.easeIn)
                         
-                        Spacer()
+                       
                         Button("New Game"){
                             self.showInit = true
                         }
